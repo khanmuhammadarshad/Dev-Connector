@@ -1,0 +1,13 @@
+const express = require("express");
+const connectDb = require("./config/db");
+const app = express();
+app.use(express.json());
+connectDb();
+app.get("/", (req, res) => res.send("api running"));
+const newLocal = "/api/user";
+app.use(newLocal, require("./routes/apis/user"));
+app.use("/api/auth", require("./routes/apis/auth"));
+app.use("/api/post", require("./routes/apis/post"));
+app.use("/api/profile", require("./routes/apis/profile"));
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log("Server started on port 5001"));
