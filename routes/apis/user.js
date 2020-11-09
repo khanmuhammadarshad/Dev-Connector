@@ -22,15 +22,18 @@ router.post(
   ],
   async (req, res) => {
     const errors = validationResult(req);
-    console.log("user api hit");
+    // console.log("user api hit", errors);
     if (!errors.isEmpty()) {
+      console.log("user api hit", errors);
       return res.status(400).json({ errors: errors.array() });
     }
     const { name, email, password } = req.body;
     try {
       let user = await User.findOne({ email });
       if (user) {
-        res.status(400).json({ error: [{ msg: "User Already Exist" }] });
+        return res
+          .status(400)
+          .json({ error: { msg: `This ${email} email already exist` } });
       }
       const avatar = gravatar.url(email, {
         s: "200",
@@ -65,7 +68,6 @@ router.post(
       );
       //   res.send("User Register Successfully");
     } catch (err) {
-      console.log(err.message);
       res.status(500).send("Server Error");
     }
   }

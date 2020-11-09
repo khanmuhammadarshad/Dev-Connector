@@ -67,11 +67,11 @@ router.post(
       profileFields.skills = skills.split(",").map((skills) => skills.trim());
     }
     profileFields.social = {};
-    if (youtube) profileFields.youtube = youtube;
-    if (twitter) profileFields.twitter = twitter;
-    if (facebook) profileFields.facebook = facebook;
-    if (linkedin) profileFields.linkedin = linkedin;
-    if (instagram) profileFields.instagram = instagram;
+    if (youtube) profileFields.social.youtube = youtube;
+    if (twitter) profileFields.social.twitter = twitter;
+    if (facebook) profileFields.social.facebook = facebook;
+    if (linkedin) profileFields.social.linkedin = linkedin;
+    if (instagram) profileFields.social.instagram = instagram;
     try {
       let profile = await Profile.findOne({ user: req.user.id });
       if (profile) {
@@ -168,6 +168,50 @@ router.put(
     }
   }
 );
+
+router.put(
+  "/education",
+  Auth,
+  [
+    check("school", "school is required").not().isEmpty(),
+    check("degree", "degree is required").not().isEmpty(),
+    check("to", "to is required").not().isEmpty(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const {
+      school,
+      degree,
+      to,
+      from,
+      fieldofstudy,
+      current,
+      description,
+    } = req.body;
+    const newExp = {
+      school,
+      degree,
+      to,
+      from,
+      fieldofstudy,
+      current,
+      description,
+    };
+    try {
+      const profile = await Profile.findOne({ user: req.user.id });
+      profile.education.unshift(newExp);
+      await profile.save();
+      res.json(profile);
+    } catch (error) {
+      console.log("error : ", error);
+      res.status(500).send("Server Error");
+    }
+  }
+);
+
 router.delete("/experience/:exp_id", Auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({ user: req.user.id });
@@ -176,6 +220,21 @@ router.delete("/experience/:exp_id", Auth, async (req, res) => {
       .map((item) => item.id)
       .indexOf(req.params.exp_id);
     profile.experience.splice(removeIndex, 1);
+    await profile.save();
+    res.json(profile);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+});
+router.delete("/education/:edu_id", Auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+    console.log("profile :", profile);
+    const removeIndex = profile.education
+      .map((item) => item.id)
+      .indexOf(req.params.exp_id);
+    profile.education.splice(removeIndex, 1);
     await profile.save();
     res.json(profile);
   } catch (error) {
