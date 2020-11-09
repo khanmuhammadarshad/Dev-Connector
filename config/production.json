@@ -1,0 +1,6 @@
+{
+    "mongoURL":"mongodb+srv://testuser:testuser@devconnector.70jfw.mongodb.net/test?retryWrites=true&w=majority",
+    "JWTSecret":"heheheheheheh",
+    "githubClientId":"0f955cf9754224d8495b",
+    "githubSecret":"f3ddd22310a3d5362ea546bb5e6bebf29f9754fc"
+}
