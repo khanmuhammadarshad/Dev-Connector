@@ -4,9 +4,6 @@ const path = require("path");
 const app = express();
 app.use(express.static(path.join(__dirname, "build")));
 
-app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
 app.use(express.json({ extended: false }));
 connectDb();
 const newLocal = "/api/user";
@@ -14,6 +11,10 @@ app.use(newLocal, require("./routes/apis/user"));
 app.use("/api/auth", require("./routes/apis/auth"));
 app.use("/api/post", require("./routes/apis/post"));
 app.use("/api/profile", require("./routes/apis/profile"));
+
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 // if (process.env.NODE_ENV === "production") {
 //   app.get("*", (req, res) => {
