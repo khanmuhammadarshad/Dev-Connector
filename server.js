@@ -2,6 +2,11 @@ const express = require("express");
 const connectDb = require("./config/db");
 const path = require("path");
 const app = express();
+app.use(express.static(path.join(__dirname, "build")));
+
+app.get("/front/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 app.use(express.json({ extended: false }));
 connectDb();
 const newLocal = "/api/user";
@@ -10,11 +15,12 @@ app.use("/api/auth", require("./routes/apis/auth"));
 app.use("/api/post", require("./routes/apis/post"));
 app.use("/api/profile", require("./routes/apis/profile"));
 
-if (process.env.NODE_ENV === "production") {
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-  });
-}
+// if (process.env.NODE_ENV === "production") {
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+//   });
+// }
+
 //port
 //port
 const PORT = process.env.PORT || 5001;
